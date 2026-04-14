@@ -68,7 +68,17 @@ Every successful trigger plays a distinct macOS system sound so you always know 
 - Accessibility permission (for simulating keystrokes)
 - Camera permission (prompted on first run)
 
-## Setup
+## Install
+
+### Option 1 — Download the prebuilt `.app` (recommended)
+
+Grab the latest zip from [Releases](https://github.com/fifteen42/vibemove/releases), unzip it, and drag `VibeMove.app` into your `Applications` folder.
+
+> **First launch**: because the build is unsigned (no $99 Apple Developer ID yet), macOS Gatekeeper will refuse to open it on a double-click. Workaround:
+> - Right-click `VibeMove.app` → **Open** → confirm in the dialog.
+> - Or in Terminal: `xattr -cr /Applications/VibeMove.app`
+
+### Option 2 — Build from source
 
 ```bash
 git clone https://github.com/fifteen42/vibemove.git
@@ -76,6 +86,14 @@ cd vibemove
 swift build
 swift run VibeMove                       # body mode (default)
 swift run VibeMove -- --mode hand        # hand mode
+```
+
+### Build your own `.app`
+
+```bash
+bash scripts/package.sh 0.1.0
+# → dist/VibeMove.app
+# → dist/VibeMove-0.1.0.zip
 ```
 
 ### Permissions

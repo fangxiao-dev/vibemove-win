@@ -68,7 +68,17 @@ Body 模式的哲学：既然要和 AI 对话，**至少要配得上这个 promp
 - 辅助功能权限（用于模拟键盘事件）
 - 摄像头权限（首次运行时会弹窗请求）
 
-## 安装运行
+## 安装
+
+### 方式一 —— 下载预编译的 `.app`（推荐）
+
+到 [Releases](https://github.com/fifteen42/vibemove/releases) 下载最新的 zip，解压后把 `VibeMove.app` 拖进 `Applications` 文件夹。
+
+> **首次启动**：因为暂时还没有 $99 的 Apple Developer ID，构建是未签名的，macOS Gatekeeper 会拒绝双击打开。绕过方法：
+> - 右键点 `VibeMove.app` → **打开** → 在弹窗里确认
+> - 或者在终端跑：`xattr -cr /Applications/VibeMove.app`
+
+### 方式二 —— 从源码构建
 
 ```bash
 git clone https://github.com/fifteen42/vibemove.git
@@ -76,6 +86,14 @@ cd vibemove
 swift build
 swift run VibeMove                       # body 模式（默认）
 swift run VibeMove -- --mode hand        # hand 模式
+```
+
+### 自己打包 `.app`
+
+```bash
+bash scripts/package.sh 0.1.0
+# → dist/VibeMove.app
+# → dist/VibeMove-0.1.0.zip
 ```
 
 ### 权限设置

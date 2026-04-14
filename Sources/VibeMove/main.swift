@@ -1,3 +1,4 @@
+import AppKit
 import AVFoundation
 import CoreGraphics
 import Foundation
@@ -55,6 +56,8 @@ final class EdgeTrigger {
 // MARK: - Hand mode controller
 
 final class HandController {
+    weak var overlay: Overlay?
+
     private let thumbsUp = EdgeTrigger()
     private let pointIndex = EdgeTrigger()
     private let peace = EdgeTrigger()
@@ -66,7 +69,8 @@ final class HandController {
     private var wristHistory: [(Date, CGFloat)] = []
     private var lastSwipeAt: Date = .distantPast
 
-    func handle(_ gesture: Gesture, wristY: CGFloat?) {
+    func handle(_ gesture: Gesture, wristY: CGFloat?, landmarks: HandLandmarks?) {
+        overlay?.updateHand(landmarks: landmarks, status: gesture.rawValue)
         if let y = wristY {
             let now = Date()
             wristHistory.append((now, y))
@@ -78,21 +82,25 @@ final class HandController {
         if thumbsUp.update(gesture == .thumbsUp) {
             Keyboard.tapFn()
             Feedback.play("Tink")
+            overlay?.flash("Fn (dictation)")
             print("[thumbsUp] Fn tap (toggle)")
         }
         if pointIndex.update(gesture == .pointIndex) {
             Keyboard.tapCmdA()
             Feedback.play("Morse")
+            overlay?.flash("⌘A")
             print("[pointIndex] Cmd+A")
         }
         if peace.update(gesture == .peace) {
             Keyboard.tapCmdV()
             Feedback.play("Glass")
+            overlay?.flash("⌘V")
             print("[peace] Cmd+V")
         }
         if rock.update(gesture == .rock) {
             Keyboard.tapCmdC()
             Feedback.play("Hero")
+            overlay?.flash("⌘C")
             print("[rock] Cmd+C")
         }
 
@@ -104,6 +112,7 @@ final class HandController {
                 pinchStreak = 0
                 Keyboard.tapReturn()
                 Feedback.play("Pop")
+                overlay?.flash("Enter")
                 print("[pinch] Enter")
             }
         } else {
@@ -127,6 +136,7 @@ final class HandController {
         wristHistory.removeAll()
         Keyboard.tapEscape()
         Feedback.play("Funk")
+        overlay?.flash("Esc")
         print("[swipeDown] Escape")
     }
 }
@@ -134,6 +144,8 @@ final class HandController {
 // MARK: - Body mode controller
 
 final class BodyController {
+    weak var overlay: Overlay?
+
     private let clap = EdgeTrigger(needed: 1, rearm: 8)
     private let crossArms = EdgeTrigger(needed: 2, rearm: 8)
     private var hipHistory: [(Date, CGFloat, CGFloat)] = []  // (time, hipY, torsoLen)
@@ -144,6 +156,7 @@ final class BodyController {
     func handle(_ lm: BodyLandmarks?) {
         frameCount += 1
         guard let lm = lm else {
+            overlay?.updateBody(landmarks: nil, status: "no body")
             hipHistory.removeAll()
             _ = clap.update(false)
             _ = crossArms.update(false)
@@ -156,6 +169,7 @@ final class BodyController {
         noBodyStreak = 0
 
         let gesture = BodyGestureClassifier.classify(lm)
+        overlay?.updateBody(landmarks: lm, status: gesture.rawValue)
         if frameCount % 30 == 0 {
             let hipY = (lm.leftHip.y + lm.rightHip.y) / 2
             let shoY = (lm.leftShoulder.y + lm.rightShoulder.y) / 2
@@ -171,11 +185,13 @@ final class BodyController {
         if clap.update(gesture == .clap) {
             Keyboard.tapReturn()
             Feedback.play("Pop")
+            overlay?.flash("Enter (clap)")
             print("[clap] Enter")
         }
         if crossArms.update(gesture == .crossArms) {
             Keyboard.tapEscape()
             Feedback.play("Funk")
+            overlay?.flash("Esc (cross)")
             print("[crossArms] Escape")
         }
 
@@ -203,6 +219,7 @@ final class BodyController {
         hipHistory.removeAll()
         Keyboard.tapFn()
         Feedback.play("Tink")
+        overlay?.flash("Fn (squat)")
         print("[squat] Fn tap (toggle)")
     }
 }
@@ -262,22 +279,28 @@ guard requestCameraAccess() else {
 }
 
 // Keep strong references at module scope so detector + controller + delegate
-// stay alive for the lifetime of RunLoop.main.
+// stay alive for the lifetime of NSApp.run().
 var handController: HandController?
 var handDetector: HandDetector?
 var bodyController: BodyController?
 var bodyDetector: BodyDetector?
+var overlay: Overlay?
+
+let app = NSApplication.shared
+app.setActivationPolicy(.accessory)  // no dock icon, no menu bar
+overlay = Overlay()
 
 if mode == "hand" {
     let c = HandController()
+    c.overlay = overlay
     let d = HandDetector()
     d.onLandmarks = { lm in
         guard let lm = lm else {
-            c.handle(.none, wristY: nil)
+            c.handle(.none, wristY: nil, landmarks: nil)
             return
         }
         let g = GestureClassifier.classify(lm)
-        c.handle(g, wristY: lm.wrist.y)
+        c.handle(g, wristY: lm.wrist.y, landmarks: lm)
     }
     do {
         try d.start()
@@ -290,6 +313,7 @@ if mode == "hand" {
     handDetector = d
 } else {
     let c = BodyController()
+    c.overlay = overlay
     let d = BodyDetector()
     d.onLandmarks = { lm in
         c.handle(lm)
@@ -310,4 +334,4 @@ signal(SIGINT) { _ in
     exit(0)
 }
 
-RunLoop.main.run()
+app.run()
