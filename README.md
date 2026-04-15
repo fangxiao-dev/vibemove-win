@@ -2,79 +2,77 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-> A vibe coding companion for macOS. Your camera is the controller — thumbs up to dictate, pinch to send, squat to turn on the mic. No hardware, no wires.
+> **You're sitting too much. Let's fix that with cardio.**
 
-VibeMove turns **hand gestures** and **body motions** into macOS keyboard shortcuts. Flash a thumbs up to start dictation. Pinch to hit Enter. Or stand up and do a **squat** to toggle dictation — and get a workout while you prompt.
+VibeMove is the vibe coding companion that makes you **earn** every prompt. Your laptop camera watches you. Drop into a squat and the mic turns on. Clap and your message ships. Cross your arms like a disappointed coach and whatever you just said gets nuked.
 
-Built for the post-keyboard era of vibe coding: when voice does the typing and AI does the thinking, **your body becomes the control surface**. Every prompt is a rep — a small win against sedentary work.
+No Joy-Con. No wristbands. No LiDAR rig smuggled out of a film studio. Just `AVCaptureSession` + Apple Vision + a little bit of shame.
 
-## Modes
+## The pitch
 
-VibeMove runs in one of two modes, picked at launch:
+AI does the thinking. Voice does the typing. **Your body becomes the mouse.**
 
-| Mode | Vibe | Who it's for |
+That's the whole gig. Every prompt you send costs roughly one squat — metaphorically, or literally, depending on which mode you pick.
+
+## Two modes
+
+Same goal: fewer keystrokes, more movement.
+
+| Mode | Vibe | Best for |
 | --- | --- | --- |
-| **`body`** (default) | Loud. Stand up, move. | Standing desk, kitchen, living room — away from the keyboard. The whole point. |
-| **`hand`** | Subtle. Sit at your desk. | Coding, writing, editing — close to the keyboard. |
+| **`body`** *(default)* | "I'm vibe-coding my way to cardio." | Standing desk, walking pad, kitchen counter, living room rug. |
+| **`hand`** | "Silent hand magic, please." | 2am desk session, open-plan office, kids asleep in the next room. |
 
 ```bash
 swift run VibeMove                       # body mode (default)
 swift run VibeMove -- --mode hand        # hand mode
 ```
 
-## Hand Mode
+## Hand mode — six gestures, no keyboard
 
-Six hand gestures → six keyboard actions. Detected by Apple's Vision framework (`VNDetectHumanHandPoseRequest`), runs **fully offline**.
+Runs `VNDetectHumanHandPoseRequest` and watches your 21 hand joints like a very polite robot. All offline. All local. Free forever.
 
-| Gesture | Action | Notes |
+| Gesture | Fires | Why this gesture |
 | --- | --- | --- |
-| 👍 Thumbs up (tap) | **Fn** (Typeless dictation toggle) | Nothing to hold — tap once to start dictating, tap again to stop. Matches Typeless's toggle semantics. |
-| 👌 Thumb + index pinch | **Enter** | Send the transcribed message. |
-| 🖐️ Open palm, swipe down | **Escape** | Cancel / dismiss. |
-| ☝️ Index finger only | **⌘A** | Select all. |
-| ✌️ Peace sign | **⌘V** | Paste. V shape = V key. |
-| 🤘 Rock sign | **⌘C** | Copy. |
+| 👍 **Thumbs up** *(tap)* | **Fn** — dictation on/off | You're the thumbs-up guy now. Own it. |
+| 👌 **OK pinch** | **Enter** | The universal "send" sign. Also: satisfying. |
+| 🖐️ **Open palm, swipe down** | **Escape** | Dismiss with menace. |
+| ☝️ **Index finger up** | **⌘A** — select all | One finger, entire universe. |
+| ✌️ **Peace sign** | **⌘V** — paste | Yes, the V stands for V. |
+| 🤘 **Rock sign** | **⌘C** — copy | Copy like you mean it. |
 
-## Body Mode
+## Body mode — the whole-body experience
 
-Three full-body actions → three keyboard actions. Uses `VNDetectHumanBodyPoseRequest`. **Camera must see at least your head through your hips** — laptop cameras on a desk won't cut it. Mount it higher or step back.
+Uses `VNDetectHumanBodyPoseRequest`. Needs to see you **from head to hips** (at least). A laptop flat on a desk will only catch your chin. Prop it up. Step back. Embrace the home fitness influencer setup.
 
-| Motion | Action | Notes |
+| Move | Fires | Philosophy |
 | --- | --- | --- |
-| 🏋️ **Squat** (dip and rise) | **Fn** (Typeless dictation toggle) | Fires on the rise back up, after at least a 30%-of-torso hip drop. |
-| 👏 **Clap** (wrists meet at chest) | **Enter** | Send. |
-| ❌ **Arms cross X** (at chest level) | **Escape** | Cancel. |
+| 🏋️ **Squat** *(drop and rise)* | **Fn** — dictation on/off | "Wanna talk to the AI? Earn it." |
+| 👏 **Clap** *(at chest level)* | **Enter** — send | The universe high-fives your message. |
+| ❌ **Arms cross X** *(at chest level)* | **Escape** — cancel | Ref says no. |
 
-The body-mode philosophy: if you're going to talk to an AI, **earn the prompt**.
+Your coworkers **will** ask what you're doing on the next video call. That's a feature, not a bug.
 
-## Feedback
+## Sound design
 
-Every successful trigger plays a distinct macOS system sound so you always know what just fired:
+Every successful trigger plays a different built-in macOS sound, so you know exactly which gesture just landed without looking at a screen:
 
-| Action | Sound |
-| --- | --- |
-| Fn (dictation) | Tink |
-| Enter | Pop |
-| Escape | Funk |
-| ⌘A | Morse |
-| ⌘V | Glass |
-| ⌘C | Hero |
-
-## Requirements
-
-- macOS 13+
-- Apple Silicon or Intel Mac with a camera
-- Swift 5.9+
-- Accessibility permission (for simulating keystrokes)
-- Camera permission (prompted on first run)
+| Action | Sound | Feels like |
+| --- | --- | --- |
+| Fn — dictation | Tink | "the mic is hot" |
+| Enter — send | Pop | "it's gone" |
+| Escape — cancel | Funk | "undo that thought" |
+| ⌘A | Morse | "grabbing everything" |
+| ⌘V | Glass | "dropping it in" |
+| ⌘C | Hero | "yoink" |
 
 ## Install
 
 ### Option 1 — Download the prebuilt `.app` (recommended)
 
-Grab the latest zip from [Releases](https://github.com/fifteen42/vibemove/releases), unzip it, and drag `VibeMove.app` into your `Applications` folder.
+Grab the latest zip from [Releases](https://github.com/fifteen42/vibemove/releases), unzip it, and drag `VibeMove.app` into `Applications`.
 
-> **First launch**: because the build is unsigned (no $99 Apple Developer ID yet), macOS Gatekeeper will refuse to open it on a double-click. Workaround:
+> **First launch is where macOS yells at you.** The build is unsigned (no $99 Apple Developer ID *yet*), so Gatekeeper will refuse a plain double-click. Get around it with one of:
 > - Right-click `VibeMove.app` → **Open** → confirm in the dialog.
 > - Or in Terminal: `xattr -cr /Applications/VibeMove.app`
 
@@ -96,34 +94,49 @@ bash scripts/package.sh 0.1.0
 # → dist/VibeMove-0.1.0.zip
 ```
 
-### Permissions
+## Permissions
 
-On first run:
+On first launch macOS will ask for two things. Say yes to both or nothing works:
 
-1. **Camera**: accept the prompt.
-2. **Accessibility**: System Settings → Privacy & Security → Accessibility → add your terminal app (Terminal, iTerm2, Ghostty, …). Required for VibeMove to post keyboard events.
+1. **Camera** — auto-prompted.
+2. **Accessibility** — System Settings → Privacy & Security → Accessibility → add your terminal app (Terminal / iTerm2 / Ghostty / whatever). Without this, VibeMove can see you but can't type for you.
+
+## Requirements
+
+- macOS 13+
+- Any Mac with a camera (Apple Silicon is faster, Intel works)
+- Swift 5.9+
+- A willingness to look slightly ridiculous
 
 ## Tuning
 
-Thresholds live at the top of `Sources/VibeMove/main.swift`. If gestures are too sensitive or too hard to trigger, tweak:
+If the thresholds feel wrong — too sensitive, too stubborn, not calibrated to your body — open `Sources/VibeMove/main.swift` and tweak the constants near the top:
 
-| Constant | Default | Controls |
+| Knob | Default | What it does |
 | --- | --- | --- |
-| `neededFrames` | 3 | Stable frames required for hand gestures to fire. |
-| `rearmFrames` | 5 | Frames the gesture must leave the pose before it can fire again. |
-| `pinchCooldownSeconds` | 0.8 | Minimum interval between two Enter taps. |
-| `swipeMinDropRatio` | 0.25 | Wrist drop (as fraction of frame height) to count as a down swipe. |
-| `squatMinDipRatio` | 0.30 | Hip drop (as fraction of torso length) for a valid squat. |
-| `squatCooldownSeconds` | 1.5 | Minimum interval between two squats. |
+| `neededFrames` | 3 | How many stable frames a hand gesture needs before it fires. |
+| `rearmFrames` | 5 | How many frames the gesture must disappear before it can fire again. |
+| `pinchCooldownSeconds` | 0.8 | Minimum gap between two Enter taps. |
+| `swipeMinDropRatio` | 0.25 | How far the wrist must drop (as a fraction of frame height) to count as a downward swipe. |
+| `squatMinDipRatio` | 0.30 | How deep your squat must go (as a fraction of torso length) before it counts. |
+| `squatCooldownSeconds` | 1.5 | Minimum gap between two squats. |
 
-## How it works
+If you find yourself doing half-reps to avoid triggering, lower the ratio. No shame. Your back, your rules.
 
-- **Camera** → `AVCaptureSession` at 640×480.
-- **Vision** → `VNDetectHumanHandPoseRequest` (21 hand keypoints) or `VNDetectHumanBodyPoseRequest` (19 body keypoints).
-- **Classifier** → plain geometry over normalized keypoint coordinates. No ML training.
-- **Keyboard** → `CGEvent`. `Fn` is special: simulated via `.flagsChanged` events (not keyDown), so the OS doesn't think Fn is stuck down and start zooming your screen.
-- **Feedback** → `NSSound` on built-in system sounds.
-- **Lifecycle** → detector + controller live at module scope so ARC doesn't release the AV delegate mid-session.
+## How it actually works
+
+- **Camera** → `AVCaptureSession` at 640×480. Small frames, fast processing, no GPU melt.
+- **Recognition** → Apple Vision framework. `VNDetectHumanHandPoseRequest` gives 21 hand joints; `VNDetectHumanBodyPoseRequest` gives 19 body joints. Both run on-device, zero cloud calls, zero model downloads.
+- **Classifier** → Plain geometry on normalized coordinates. No ML training, no labeled data, no 20GB weights. Just "is this point above that point, and are these two distances smaller than this ratio."
+- **Keyboard injection** → `CGEvent`. The **Fn** key is the tricky one: it has to be simulated via `.flagsChanged` events (not `keyDown`), otherwise macOS thinks Fn is stuck down forever and starts zooming your screen for you. Learned this one the hard way.
+- **Feedback** → `NSSound` playing built-in system sounds. Free, instant, doesn't need Accessibility permission.
+- **HUD** → A small `NSWindow` overlay in the bottom-right corner showing the live skeleton, the current detected gesture, and a flash on every fired action. So you can see what VibeMove sees.
+
+## Vibe
+
+The long-term vibe: in the post-keyboard era, typing isn't the bottleneck. Voice + AI handles the text. What's left is **intent** — pick this, skip that, send, cancel, switch context. Intent is where the body shines. A squat, a clap, a thumbs-up — all perfectly good ways to tell a computer "yes, do the thing."
+
+Also: you shouldn't spend ten hours a day frozen in a chair. One squat per prompt adds up.
 
 ## Credit
 
@@ -131,4 +144,4 @@ Inspired in spirit by [wong2/vibe-ring](https://github.com/wong2/vibe-ring). Vib
 
 ## License
 
-MIT
+MIT. Have fun, break it, send a PR.
