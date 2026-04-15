@@ -2,11 +2,11 @@
 
 [English](README.md) | **简体中文**
 
-> 用身体打字。[vibe-ring](https://github.com/wong2/vibe-ring) 的摄像头版搭档——不用 Joy-Con，你的身体本身就是控制器。
+> macOS 上的 vibe coding 助手。你的摄像头就是控制器——竖大拇指开始听写，捏合发送，深蹲开麦。不用外设，不用连线。
 
-VibeMove 把**手势**和**身体动作**翻译成 macOS 快捷键。竖个大拇指开始听写，捏合一下发送消息。或者站起来做个**深蹲**开启听写——一边 vibe 一边顺便锻炼身体。
+VibeMove 把**手势**和**身体动作**翻译成 macOS 快捷键。竖个大拇指开始听写，捏合一下发送消息，或者站起来做个**深蹲**开启麦克风——一边写 prompt，一边顺便锻炼。
 
-核心理念：让你的 AI 工作流变得"物理化"。每一次 prompt 都是一次动作。
+为 vibe coding 的后键盘时代而生：当语音负责打字、AI 负责思考，**你的身体就是新的控制面板**。每一次 prompt 都是一次动作，一次对久坐的小小反击。
 
 ## 两种模式
 
@@ -127,7 +127,7 @@ bash scripts/package.sh 0.1.0
 
 ## 致谢
 
-灵感来自 [wong2/vibe-ring](https://github.com/wong2/vibe-ring)，那个项目用任天堂 Ring-Con 做了同样的事情。VibeMove 是它的摄像头原生版兄弟——同样的 vibe，不需要任何外设。
+精神层面受到 [wong2/vibe-ring](https://github.com/wong2/vibe-ring) 启发。VibeMove 走的是不同的路——没有控制器、没有外设，只有你的摄像头和你的身体。
 
 ## 许可证
 

@@ -2,11 +2,11 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-> Move to type. A camera-driven companion to [vibe-ring](https://github.com/wong2/vibe-ring) — but instead of a Joy-Con, your own body is the controller.
+> A vibe coding companion for macOS. Your camera is the controller — thumbs up to dictate, pinch to send, squat to turn on the mic. No hardware, no wires.
 
-VibeMove turns **hand gestures** and **body motions** into macOS keyboard shortcuts. Flash a thumbs up to start dictation. Pinch to hit Enter. Or stand up and do a **squat** to toggle dictation — and get a workout while you vibe-code.
+VibeMove turns **hand gestures** and **body motions** into macOS keyboard shortcuts. Flash a thumbs up to start dictation. Pinch to hit Enter. Or stand up and do a **squat** to toggle dictation — and get a workout while you prompt.
 
-The whole point: make your AI workflow *physical*. Every prompt is a rep.
+Built for the post-keyboard era of vibe coding: when voice does the typing and AI does the thinking, **your body becomes the control surface**. Every prompt is a rep — a small win against sedentary work.
 
 ## Modes
 
@@ -127,7 +127,7 @@ Thresholds live at the top of `Sources/VibeMove/main.swift`. If gestures are too
 
 ## Credit
 
-Inspired by [wong2/vibe-ring](https://github.com/wong2/vibe-ring), which does the same thing with a Nintendo Ring-Con. VibeMove is the camera-native cousin — same vibe, no hardware.
+Inspired in spirit by [wong2/vibe-ring](https://github.com/wong2/vibe-ring). VibeMove takes a different path — no controller, no hardware, just your camera and your body.
 
 ## License
 
