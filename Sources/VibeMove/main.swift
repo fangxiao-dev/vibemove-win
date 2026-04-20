@@ -11,10 +11,10 @@ let rearmFrames = 5
 let pinchNeededFrames = 2
 let pinchCooldownSeconds: TimeInterval = 0.8
 
-// Swipe-down config.
-let swipeWindowSeconds: TimeInterval = 0.4
-let swipeMinDropRatio: CGFloat = 0.25
-let swipeCooldownSeconds: TimeInterval = 1.0
+// After a Delete fires, suppress Enter briefly — the release of a closed pinch
+// can momentarily look like an OK sign before the thumb-index gap opens up.
+let enterAfterDeleteCooldown: TimeInterval = 0.4
+
 
 // Squat config.
 let squatWindowSeconds: TimeInterval = 2.0
@@ -59,25 +59,20 @@ final class HandController {
     weak var overlay: Overlay?
 
     private let thumbsUp = EdgeTrigger()
+    private let thumbsDown = EdgeTrigger()
     private let pointIndex = EdgeTrigger()
+    private let pointLeft = EdgeTrigger()
+    private let pointRight = EdgeTrigger()
     private let peace = EdgeTrigger()
     private let rock = EdgeTrigger()
+    private let closedPinch = EdgeTrigger()
 
     private var pinchStreak = 0
     private var lastPinchAt: Date = .distantPast
+    private var lastDeleteAt: Date = .distantPast
 
-    private var wristHistory: [(Date, CGFloat)] = []
-    private var lastSwipeAt: Date = .distantPast
-
-    func handle(_ gesture: Gesture, wristY: CGFloat?, landmarks: HandLandmarks?) {
+    func handle(_ gesture: Gesture, landmarks: HandLandmarks?) {
         overlay?.updateHand(landmarks: landmarks, status: gesture.rawValue)
-        if let y = wristY {
-            let now = Date()
-            wristHistory.append((now, y))
-            wristHistory = wristHistory.filter { now.timeIntervalSince($0.0) <= swipeWindowSeconds }
-        } else {
-            wristHistory.removeAll()
-        }
 
         if thumbsUp.update(gesture == .thumbsUp) {
             Keyboard.tapFn()
@@ -85,11 +80,29 @@ final class HandController {
             overlay?.flash("Fn (dictation)")
             print("[thumbsUp] Fn tap (toggle)")
         }
+        if thumbsDown.update(gesture == .thumbsDown) {
+            Keyboard.tapEscape()
+            Feedback.play("Funk")
+            overlay?.flash("Esc")
+            print("[thumbsDown] Escape")
+        }
         if pointIndex.update(gesture == .pointIndex) {
             Keyboard.tapCmdA()
             Feedback.play("Morse")
             overlay?.flash("⌘A")
             print("[pointIndex] Cmd+A")
+        }
+        if pointLeft.update(gesture == .pointLeft) {
+            Keyboard.tapLeftArrow()
+            Feedback.play("Tink")
+            overlay?.flash("←")
+            print("[pointLeft] Left arrow")
+        }
+        if pointRight.update(gesture == .pointRight) {
+            Keyboard.tapRightArrow()
+            Feedback.play("Tink")
+            overlay?.flash("→")
+            print("[pointRight] Right arrow")
         }
         if peace.update(gesture == .peace) {
             Keyboard.tapCmdV()
@@ -106,9 +119,11 @@ final class HandController {
 
         if gesture == .pinch {
             pinchStreak += 1
+            let now = Date()
             if pinchStreak >= pinchNeededFrames,
-               Date().timeIntervalSince(lastPinchAt) > pinchCooldownSeconds {
-                lastPinchAt = Date()
+               now.timeIntervalSince(lastPinchAt) > pinchCooldownSeconds,
+               now.timeIntervalSince(lastDeleteAt) > enterAfterDeleteCooldown {
+                lastPinchAt = now
                 pinchStreak = 0
                 Keyboard.tapReturn()
                 Feedback.play("Pop")
@@ -119,25 +134,13 @@ final class HandController {
             pinchStreak = 0
         }
 
-        if gesture == .openPalm {
-            detectSwipeDown()
+        if closedPinch.update(gesture == .closedPinch) {
+            lastDeleteAt = Date()
+            Keyboard.tapDelete()
+            Feedback.play("Bottle")
+            overlay?.flash("⌫")
+            print("[closedPinch] Delete")
         }
-    }
-
-    private func detectSwipeDown() {
-        guard wristHistory.count >= 4 else { return }
-        guard Date().timeIntervalSince(lastSwipeAt) > swipeCooldownSeconds else { return }
-        let maxY = wristHistory.map { $0.1 }.max() ?? 0
-        let minY = wristHistory.map { $0.1 }.min() ?? 0
-        let drop = maxY - minY
-        guard drop >= swipeMinDropRatio else { return }
-        guard let latest = wristHistory.last?.1, latest <= minY + 0.02 else { return }
-        lastSwipeAt = Date()
-        wristHistory.removeAll()
-        Keyboard.tapEscape()
-        Feedback.play("Funk")
-        overlay?.flash("Esc")
-        print("[swipeDown] Escape")
     }
 }
 
@@ -258,10 +261,13 @@ guard mode == "hand" || mode == "body" else {
 
 print("VibeMove — mode: \(mode)")
 if mode == "hand" {
-    print("  👍 Thumbs up (tap, toggle)      → Fn tap (Typeless dictation)")
+    print("  👍 Thumbs up                    → Fn tap (Typeless dictation)")
+    print("  👎 Thumbs down                  → Escape")
     print("  👌 Thumb + index pinch          → Enter")
-    print("  🖐️  Open palm swipe down         → Escape")
-    print("  ☝️  Index only                  → Cmd+A (select all)")
+    print("  🤏 Closed pinch (fingers curled) → Delete / Backspace")
+    print("  ☝️  Index up                    → Cmd+A (select all)")
+    print("  ☜  Index pointing left           → Left arrow")
+    print("  ☞  Index pointing right          → Right arrow")
     print("  ✌️  Peace sign                   → Cmd+V (paste)")
     print("  🤘 Rock sign                    → Cmd+C (copy)")
 } else {
@@ -296,11 +302,11 @@ if mode == "hand" {
     let d = HandDetector()
     d.onLandmarks = { lm in
         guard let lm = lm else {
-            c.handle(.none, wristY: nil, landmarks: nil)
+            c.handle(.none, landmarks: nil)
             return
         }
         let g = GestureClassifier.classify(lm)
-        c.handle(g, wristY: lm.wrist.y, landmarks: lm)
+        c.handle(g, landmarks: lm)
     }
     do {
         try d.start()
