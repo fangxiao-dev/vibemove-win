@@ -1,3 +1,4 @@
+# Swift / macOS (reference build artifacts)
 .build/
 .swiftpm/
 Package.resolved
@@ -6,3 +7,22 @@ Package.resolved
 *.xcworkspace/
 xcuserdata/
 dist/
+
+# Python (Windows prototype)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# MediaPipe model files (large binaries, download separately)
+*.task
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+desktop.ini
