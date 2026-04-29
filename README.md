@@ -1,102 +1,55 @@
-# VibeMove
+# VibeMove for Windows
 
 **English** | [简体中文](README.zh-CN.md)
 
-A vibe coding companion for macOS. Your camera is the controller.
+A Windows port of [VibeMove](https://github.com/fifteen42/vibemove) — turn webcam-detected hand and body gestures into keyboard actions for vibe coding workflows.
 
-Thumbs up to dictate. Pinch to send. Squat to turn on the mic. No hardware, no wires — just Apple Vision and your body.
+> **Status: pre-implementation.** The macOS prototype exists and is the reference. This repo is building the Windows version from scratch using Python + MediaPipe.
 
-## Two modes
+## What it does
 
-- **`body`** *(default)* — squat, clap, arms cross. For standing desks or any time you're tired of sitting.
-- **`hand`** — subtle finger gestures when body motion isn't an option.
+Your camera becomes a controller. Raise a thumb to toggle dictation, pinch to send, clap to submit — no hardware, no wires.
 
-```bash
-swift run VibeMove                       # body mode
-swift run VibeMove -- --mode hand        # hand mode
-```
+Two modes:
 
-## Hand mode
+- **`hand`** — finger gestures for subtle input
+- **`body`** — squat, clap, cross arms for standing-desk use
+
+## Gesture → Action mapping
+
+**Hand mode**
 
 | Gesture | Action |
 | --- | --- |
-| 👍 Thumbs up | Fn (dictation toggle) |
-| 👌 Pinch | Enter |
-| 🖐️ Palm swipe down | Escape |
-| ☝️ Index up | ⌘A |
-| ✌️ Peace | ⌘V |
-| 🤘 Rock | ⌘C |
+| 👍 Thumbs up | Right Alt (Typeless dictation toggle) |
+| 👌 Pinch (OK sign) | Enter |
+| 🤏 Closed pinch | Backspace |
+| ☝️ Index up | Ctrl+A |
+| ☜ Index left | Left arrow |
+| ☞ Index right | Right arrow |
+| ✌️ Peace | Ctrl+V |
+| 🤘 Rock | Ctrl+C |
+| 👎 Thumbs down | Escape |
 
-## Body mode
-
-Camera must see head to hips. Laptop flat on a desk won't work — prop it up or step back.
+**Body mode** *(requires head-to-hip camera framing)*
 
 | Motion | Action |
 | --- | --- |
-| 🏋️ Squat | Fn (dictation toggle) |
+| 🏋️ Squat | Right Alt (Typeless dictation toggle) |
 | 👏 Clap | Enter |
 | ❌ Arms cross X | Escape |
 
-Every trigger plays a distinct macOS system sound so you know what fired.
+## Stack
 
-## Install
+- Python 3.11 + OpenCV + MediaPipe (prototype)
+- C#/.NET WPF shell (planned, after prototype validates recognition)
+- Win32 `SendInput` for keyboard injection
 
-Download the latest zip from [Releases](https://github.com/fifteen42/vibemove/releases), unzip, and drag `VibeMove.app` into `Applications`.
+See [`docs/migration-plan.md`](docs/migration-plan.md) for the implementation roadmap and [`docs/porting-reference.md`](docs/porting-reference.md) for the macOS-to-Windows porting guide.
 
-First launch: the build is unsigned, so right-click → Open to bypass Gatekeeper. Or:
+## Original macOS version
 
-```bash
-xattr -cr /Applications/VibeMove.app
-```
-
-### Build from source
-
-```bash
-git clone https://github.com/fifteen42/vibemove.git
-cd vibemove
-swift build
-swift run VibeMove
-```
-
-### Package your own `.app`
-
-```bash
-bash scripts/package.sh 0.1.0
-```
-
-## Permissions
-
-1. **Camera** — auto-prompted on first launch.
-2. **Accessibility** — System Settings → Privacy & Security → Accessibility → add your terminal app.
-
-## Requirements
-
-macOS 13+, a Mac with a camera, Swift 5.9+.
-
-## Tuning
-
-Thresholds live at the top of `Sources/VibeMove/main.swift`:
-
-| Knob | Default | Controls |
-| --- | --- | --- |
-| `neededFrames` | 3 | Frames of stability before a hand gesture fires |
-| `rearmFrames` | 5 | Frames of absence before it can fire again |
-| `pinchCooldownSeconds` | 0.8 | Min gap between Enter taps |
-| `swipeMinDropRatio` | 0.25 | Wrist drop as fraction of frame height |
-| `squatMinDipRatio` | 0.30 | Hip drop as fraction of torso length |
-| `squatCooldownSeconds` | 1.5 | Min gap between squats |
-
-## How it works
-
-- `AVCaptureSession` at 640×480
-- Apple Vision for hand (21 joints) and body (19 joints) pose, fully offline
-- Plain geometry on normalized coordinates — no ML training
-- `CGEvent` for keyboard injection. Fn uses `.flagsChanged`, not `keyDown`, otherwise macOS thinks Fn is stuck and starts zooming the screen
-- Small skeleton HUD in the bottom-right corner showing what the detector sees
-
-## Credit
-
-Inspired in spirit by [wong2/vibe-ring](https://github.com/wong2/vibe-ring).
+The macOS app is at [fifteen42/vibemove](https://github.com/fifteen42/vibemove). It uses AVFoundation + Apple Vision + CGEvent and targets macOS 13+. The Windows version ports the gesture logic and replaces all Apple platform layers.
 
 ## License
 
